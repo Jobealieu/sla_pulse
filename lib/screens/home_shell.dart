@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'dashboard/dashboard_screen.dart';
+import 'team/team_screen.dart';
 
 /// The four main tabs with a bottom NavigationBar.
 ///
@@ -24,7 +25,7 @@ class _HomeShellState extends State<HomeShell> {
       body: switch (_index) {
         0 => DashboardScreen(onSeeAll: () => _select(1)),
         1 => const _ComingSoon('Tasks'),
-        2 => const _ComingSoon('Team'),
+        2 => const TeamScreen(),
         _ => const _ComingSoon('Profile'),
       },
       bottomNavigationBar: NavigationBar(

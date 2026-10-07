@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
+import '../../app.dart';
 import '../../data/database.dart';
 import '../../data/session.dart';
 import '../../logic/format.dart';
@@ -58,6 +59,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
     });
   }
 
+  Future<void> _newTask() async {
+    await Navigator.pushNamed(context, AppRoutes.taskForm);
+    _load();
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -71,6 +77,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
       ..sort((a, b) => compareUrgency(a, b, _now));
 
     return Scaffold(
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: _newTask,
+        icon: const Icon(Icons.add_rounded),
+        label: const Text('New task'),
+      ),
       body: SafeArea(
         child: _loading
             ? const Center(child: CircularProgressIndicator())
