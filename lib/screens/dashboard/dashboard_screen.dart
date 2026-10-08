@@ -59,6 +59,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
     });
   }
 
+  Future<void> _openTask(TaskItem t) async {
+    await Navigator.pushNamed(context, AppRoutes.task, arguments: t.id);
+    _load();
+  }
+
   Future<void> _newTask() async {
     await Navigator.pushNamed(context, AppRoutes.taskForm);
     _load();
@@ -156,7 +161,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       for (final t in attention.take(5))
                         Padding(
                           padding: const EdgeInsets.only(bottom: 10),
-                          child: TaskCard(task: t, assignee: _members[t.assigneeId], now: _now),
+                          child: TaskCard(task: t, assignee: _members[t.assigneeId], now: _now, onTap: () => _openTask(t)),
                         ),
                   ],
                 ),
