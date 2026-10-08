@@ -15,6 +15,16 @@ import '../../widgets/panel.dart';
 import '../../widgets/task_card.dart';
 import 'health_ring.dart';
 
+const _weekdays = [
+  'Monday',
+  'Tuesday',
+  'Wednesday',
+  'Thursday',
+  'Friday',
+  'Saturday',
+  'Sunday'
+];
+
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key, this.onSeeAll});
 
@@ -38,7 +48,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
     _load();
     // Re-check every SLA once a minute, so a task can turn
     // At Risk or Overdue on screen without the user doing anything.
-    _ticker = Timer.periodic(const Duration(minutes: 1), (_) => setState(() => _now = DateTime.now()));
+    _ticker = Timer.periodic(const Duration(minutes: 1),
+        (_) => setState(() => _now = DateTime.now()));
   }
 
   @override
@@ -102,8 +113,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('${greeting(_now)},', style: theme.textTheme.bodyLarge?.copyWith(color: theme.colorScheme.onSurfaceVariant)),
-                              Text(me?.firstName ?? 'there', style: theme.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w800)),
+                              Text('${greeting(_now)},',
+                                  style: theme.textTheme.bodyLarge?.copyWith(
+                                      color:
+                                          theme.colorScheme.onSurfaceVariant)),
+                              Text(
+                                  '${_weekdays[_now.weekday - 1]}, ${formatDate(_now)}',
+                                  style: theme.textTheme.bodySmall?.copyWith(
+                                      color:
+                                          theme.colorScheme.onSurfaceVariant)),
                             ],
                           ),
                         ),
@@ -120,10 +138,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text('Project health', style: theme.textTheme.labelLarge?.copyWith(color: theme.colorScheme.onSurfaceVariant)),
-                                Text(healthLabel(score), style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w800)),
+                                Text('Project health',
+                                    style: theme.textTheme.labelLarge?.copyWith(
+                                        color: theme
+                                            .colorScheme.onSurfaceVariant)),
+                                Text(healthLabel(score),
+                                    style: theme.textTheme.titleLarge?.copyWith(
+                                        fontWeight: FontWeight.w800)),
                                 const SizedBox(height: 10),
-                                for (final s in SlaStatus.values) _LegendRow(status: s, count: counts[s]!),
+                                for (final s in SlaStatus.values)
+                                  _LegendRow(status: s, count: counts[s]!),
                               ],
                             ),
                           ),
@@ -135,20 +159,41 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     // height grid) let tiles grow with large text without overflowing.
                     Row(
                       children: [
-                        Expanded(child: _StatTile(icon: Icons.layers_rounded, value: _tasks.length, label: 'Total tasks', color: theme.colorScheme.primary)),
+                        Expanded(
+                            child: _StatTile(
+                                icon: Icons.layers_rounded,
+                                value: _tasks.length,
+                                label: 'Total tasks',
+                                color: theme.colorScheme.primary)),
                         const SizedBox(width: 12),
-                        Expanded(child: _StatTile(icon: slaIcon(SlaStatus.onTrack), value: counts[SlaStatus.onTrack]!, label: 'On track', color: slaColor(SlaStatus.onTrack))),
+                        Expanded(
+                            child: _StatTile(
+                                icon: slaIcon(SlaStatus.onTrack),
+                                value: counts[SlaStatus.onTrack]!,
+                                label: 'On track',
+                                color: slaColor(SlaStatus.onTrack))),
                       ],
                     ),
                     const SizedBox(height: 12),
                     Row(
                       children: [
-                        Expanded(child: _StatTile(icon: slaIcon(SlaStatus.atRisk), value: counts[SlaStatus.atRisk]!, label: 'At risk', color: slaColor(SlaStatus.atRisk))),
+                        Expanded(
+                            child: _StatTile(
+                                icon: slaIcon(SlaStatus.atRisk),
+                                value: counts[SlaStatus.atRisk]!,
+                                label: 'At risk',
+                                color: slaColor(SlaStatus.atRisk))),
                         const SizedBox(width: 12),
-                        Expanded(child: _StatTile(icon: slaIcon(SlaStatus.overdue), value: counts[SlaStatus.overdue]!, label: 'Overdue', color: slaColor(SlaStatus.overdue))),
+                        Expanded(
+                            child: _StatTile(
+                                icon: slaIcon(SlaStatus.overdue),
+                                value: counts[SlaStatus.overdue]!,
+                                label: 'Overdue',
+                                color: slaColor(SlaStatus.overdue))),
                       ],
                     ),
-                    SectionHeader('Needs attention (${attention.length})', action: 'See all', onAction: widget.onSeeAll),
+                    SectionHeader('Needs attention (${attention.length})',
+                        action: 'See all', onAction: widget.onSeeAll),
                     if (attention.isEmpty)
                       const Panel(
                         child: EmptyState(
@@ -161,7 +206,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       for (final t in attention.take(5))
                         Padding(
                           padding: const EdgeInsets.only(bottom: 10),
-                          child: TaskCard(task: t, assignee: _members[t.assigneeId], now: _now, onTap: () => _openTask(t)),
+                          child: TaskCard(
+                              task: t,
+                              assignee: _members[t.assigneeId],
+                              now: _now,
+                              onTap: () => _openTask(t)),
                         ),
                   ],
                 ),
@@ -195,7 +244,11 @@ class _LegendRow extends StatelessWidget {
 }
 
 class _StatTile extends StatelessWidget {
-  const _StatTile({required this.icon, required this.value, required this.label, required this.color});
+  const _StatTile(
+      {required this.icon,
+      required this.value,
+      required this.label,
+      required this.color});
 
   final IconData icon;
   final int value;
@@ -211,7 +264,9 @@ class _StatTile extends StatelessWidget {
         children: [
           Container(
             padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(color: color.withValues(alpha: 0.14), borderRadius: BorderRadius.circular(12)),
+            decoration: BoxDecoration(
+                color: color.withValues(alpha: 0.14),
+                borderRadius: BorderRadius.circular(12)),
             child: Icon(icon, color: color, size: 20),
           ),
           const SizedBox(width: 12),
@@ -219,8 +274,12 @@ class _StatTile extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('$value', style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w800)),
-                Text(label, style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant)),
+                Text('$value',
+                    style: theme.textTheme.titleLarge
+                        ?.copyWith(fontWeight: FontWeight.w800)),
+                Text(label,
+                    style: theme.textTheme.bodySmall
+                        ?.copyWith(color: theme.colorScheme.onSurfaceVariant)),
               ],
             ),
           ),
