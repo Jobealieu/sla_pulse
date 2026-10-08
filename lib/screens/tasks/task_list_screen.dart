@@ -191,8 +191,22 @@ class _TaskListScreenState extends State<TaskListScreen> {
                     child: visible.isEmpty
                         ? ListView(
                             physics: const AlwaysScrollableScrollPhysics(),
-                            children: const [
-                              EmptyState(icon: Icons.search_off_rounded, title: 'No tasks here', message: 'Try another filter or clear the search.'),
+                            children: [
+                              const EmptyState(icon: Icons.search_off_rounded, title: 'No tasks here', message: 'Try another filter or clear the search.'),
+                              Center(
+                                child: TextButton.icon(
+                                  icon: const Icon(Icons.filter_alt_off_rounded),
+                                  label: const Text('Clear filters'),
+                                  onPressed: () {
+                                    _search.clear();
+                                    setState(() {
+                                      _query = '';
+                                      _filter = null;
+                                      _mineOnly = false;
+                                    });
+                                  },
+                                ),
+                              ),
                             ],
                           )
                         : ListView.separated(
