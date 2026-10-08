@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
+import 'data/session.dart';
 import 'models/member.dart';
 import 'models/task_item.dart';
+import 'screens/auth/sign_in_screen.dart';
 import 'screens/home_shell.dart';
 import 'screens/tasks/task_form_screen.dart';
 import 'screens/team/add_member_screen.dart';
@@ -12,6 +14,7 @@ import 'theme.dart';
 /// Navigator.pushNamed with one of these names (plus arguments)
 /// instead of importing each other, which keeps them decoupled.
 class AppRoutes {
+  static const signIn = '/signin';
   static const home = '/home';
   static const taskForm = '/task/form';
   static const member = '/member';
@@ -19,6 +22,7 @@ class AppRoutes {
 
   static Route<dynamic>? generate(RouteSettings settings) {
     final Widget? page = switch (settings.name) {
+      AppRoutes.signIn => const SignInScreen(),
       AppRoutes.home => const HomeShell(),
       AppRoutes.taskForm => TaskFormScreen(existing: settings.arguments as TaskItem?),
       AppRoutes.member => MemberProfileScreen(member: settings.arguments! as Member),
@@ -30,8 +34,30 @@ class AppRoutes {
   }
 }
 
-class SlaPulseApp extends StatelessWidget {
-  const SlaPulseApp({super.key});
+class SlaPulseApp extends StatefulWidget {
+  const SlaPulseApp({super.key, this.startDark = false, this.signedIn = false});
+
+  final bool startDark;
+  final bool signedIn;
+
+  /// Lets any screen below reach the theme switch: SlaPulseApp.of(context).setDark(true)
+  static SlaPulseAppState of(BuildContext context) => context.findAncestorStateOfType<SlaPulseAppState>()!;
+
+  @override
+  State<SlaPulseApp> createState() => SlaPulseAppState();
+}
+
+class SlaPulseAppState extends State<SlaPulseApp> {
+  late bool _dark = widget.startDark;
+
+  bool get isDark => _dark;
+
+  /// setState rebuilds MaterialApp with the new themeMode,
+  /// then the choice is saved so it survives a restart.
+  Future<void> setDark(bool value) async {
+    setState(() => _dark = value);
+    await Session.setDarkMode(value);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,8 +66,8 @@ class SlaPulseApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: buildTheme(Brightness.light),
       darkTheme: buildTheme(Brightness.dark),
-      themeMode: ThemeMode.light,
-      home: const HomeShell(),
+      themeMode: _dark ? ThemeMode.dark : ThemeMode.light,
+      home: widget.signedIn ? const HomeShell() : const SignInScreen(),
       onGenerateRoute: AppRoutes.generate,
     );
   }
