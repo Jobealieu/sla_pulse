@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'dashboard/dashboard_screen.dart';
 import 'profile/profile_screen.dart';
+import 'tasks/task_list_screen.dart';
 import 'team/team_screen.dart';
 
 /// The four main tabs with a bottom NavigationBar.
@@ -25,7 +26,7 @@ class _HomeShellState extends State<HomeShell> {
     return Scaffold(
       body: switch (_index) {
         0 => DashboardScreen(onSeeAll: () => _select(1)),
-        1 => const _ComingSoon('Tasks'),
+        1 => const TaskListScreen(),
         2 => const TeamScreen(),
         _ => const ProfileScreen(),
       },
@@ -41,17 +42,4 @@ class _HomeShellState extends State<HomeShell> {
       ),
     );
   }
-}
-
-/// Temporary tab body until the teammate who owns this tab merges their screen.
-class _ComingSoon extends StatelessWidget {
-  const _ComingSoon(this.title);
-
-  final String title;
-
-  @override
-  Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(title: Text(title)),
-        body: const Center(child: Text('Coming soon')),
-      );
 }

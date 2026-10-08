@@ -5,6 +5,7 @@ import 'models/member.dart';
 import 'models/task_item.dart';
 import 'screens/auth/sign_in_screen.dart';
 import 'screens/home_shell.dart';
+import 'screens/tasks/task_details_screen.dart';
 import 'screens/tasks/task_form_screen.dart';
 import 'screens/team/add_member_screen.dart';
 import 'screens/team/member_profile_screen.dart';
@@ -16,6 +17,7 @@ import 'theme.dart';
 class AppRoutes {
   static const signIn = '/signin';
   static const home = '/home';
+  static const task = '/task';
   static const taskForm = '/task/form';
   static const member = '/member';
   static const newMember = '/member/new';
@@ -24,6 +26,7 @@ class AppRoutes {
     final Widget? page = switch (settings.name) {
       AppRoutes.signIn => const SignInScreen(),
       AppRoutes.home => const HomeShell(),
+      AppRoutes.task => TaskDetailsScreen(taskId: settings.arguments! as int),
       AppRoutes.taskForm => TaskFormScreen(existing: settings.arguments as TaskItem?),
       AppRoutes.member => MemberProfileScreen(member: settings.arguments! as Member),
       AppRoutes.newMember => const AddMemberScreen(),

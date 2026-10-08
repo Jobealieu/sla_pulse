@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../app.dart';
 import '../../data/database.dart';
 import '../../logic/sla.dart';
 import '../../models/member.dart';
@@ -37,6 +38,11 @@ class _MemberProfileScreenState extends State<MemberProfileScreen> {
       _tasks = all.where((t) => t.assigneeId == widget.member.id).toList();
       _loading = false;
     });
+  }
+
+  Future<void> _openTask(TaskItem t) async {
+    await Navigator.pushNamed(context, AppRoutes.task, arguments: t.id);
+    _load();
   }
 
   @override
@@ -95,7 +101,7 @@ class _MemberProfileScreenState extends State<MemberProfileScreen> {
                   for (final t in sorted)
                     Padding(
                       padding: const EdgeInsets.only(bottom: 10),
-                      child: TaskCard(task: t, assignee: m, now: now),
+                      child: TaskCard(task: t, assignee: m, now: now, onTap: () => _openTask(t)),
                     ),
               ],
             ),
