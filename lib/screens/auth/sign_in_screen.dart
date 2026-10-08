@@ -149,6 +149,7 @@ class _PinSheetState extends State<_PinSheet> {
   final _formKey = GlobalKey<FormState>();
   final _pin = TextEditingController();
   int _wrongTries = 0;
+  bool _showPin = false; // false = PIN hidden as dots 
 
   @override
   void dispose() {
@@ -197,11 +198,17 @@ class _PinSheetState extends State<_PinSheet> {
             TextFormField(
               controller: _pin,
               autofocus: true,
-              obscureText: true,
+              obscureText: !_showPin,
               keyboardType: TextInputType.number,
               maxLength: 4,
               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-              decoration: fieldDecoration('PIN', Icons.lock_outline_rounded),
+              decoration: fieldDecoration('PIN', Icons.lock_outline_rounded).copyWith(
+                suffixIcon: IconButton(
+                  tooltip: _showPin ? 'Hide PIN' : 'Show PIN',
+                  icon: Icon(_showPin ? Icons.visibility_off_rounded : Icons.visibility_rounded),
+                  onPressed: () => setState(() => _showPin = !_showPin),
+                ),
+              ),
               validator: (v) =>
                   Validators.pin(v) ?? (v != widget.member.pin ? 'Incorrect PIN. Try again.' : null),
               onFieldSubmitted: (_) => _submit(),
