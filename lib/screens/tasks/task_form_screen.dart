@@ -22,7 +22,8 @@ class TaskFormScreen extends StatefulWidget {
 class _TaskFormScreenState extends State<TaskFormScreen> {
   final _formKey = GlobalKey<FormState>();
   late final _title = TextEditingController(text: widget.existing?.title);
-  late final _description = TextEditingController(text: widget.existing?.description);
+  late final _description =
+      TextEditingController(text: widget.existing?.description);
   late int? _assigneeId = widget.existing?.assigneeId;
   late DateTime? _dueAt = widget.existing?.dueAt;
   late Priority _priority = widget.existing?.priority ?? Priority.medium;
@@ -65,13 +66,16 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
       lastDate: now.add(const Duration(days: 365)),
     );
     if (date == null || !mounted) return;
-    final time = await showTimePicker(context: context, initialTime: TimeOfDay.fromDateTime(current));
+    final time = await showTimePicker(
+        context: context, initialTime: TimeOfDay.fromDateTime(current));
     if (time == null || !mounted) return;
-    _setDeadline(field, DateTime(date.year, date.month, date.day, time.hour, time.minute));
+    _setDeadline(field,
+        DateTime(date.year, date.month, date.day, time.hour, time.minute));
   }
 
   void _setDeadline(FormFieldState<DateTime> field, DateTime value) {
-    field.didChange(value); // tells the Form the value changed (and re-validates)
+    field.didChange(
+        value); // tells the Form the value changed (and re-validates)
     setState(() => _dueAt = value);
   }
 
@@ -98,7 +102,9 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
         final changes = _changes(old, updated);
         await AppDatabase.instance.updateTask(
           updated,
-          changes.isEmpty ? '$actor saved with no changes' : '$actor changed ${changes.join(', ')}',
+          changes.isEmpty
+              ? '$actor saved with no changes'
+              : '$actor changed ${changes.join(', ')}',
         );
       } else {
         final task = TaskItem(
@@ -118,7 +124,8 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
       if (!mounted) return;
       setState(() => _saving = false);
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Could not save the task. Please try again.')),
+        const SnackBar(
+            content: Text('Could not save the task. Please try again.')),
       );
     }
   }
@@ -139,8 +146,12 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
           title: const Text('Discard changes?'),
           content: const Text('Your edits to this task will be lost.'),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Keep editing')),
-            FilledButton(onPressed: () => Navigator.pop(context, true), child: const Text('Discard')),
+            TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: const Text('Keep editing')),
+            FilledButton(
+                onPressed: () => Navigator.pop(context, true),
+                child: const Text('Discard')),
           ],
         ),
       ) ??
@@ -170,7 +181,8 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
                 textCapitalization: TextCapitalization.sentences,
                 textInputAction: TextInputAction.next,
                 maxLength: 60,
-                decoration: fieldDecoration('Task title', Icons.title_rounded, hint: 'e.g. Build the login screen'),
+                decoration: fieldDecoration('Task title', Icons.title_rounded,
+                    hint: 'e.g. Build the login screen'),
                 validator: Validators.taskTitle,
               ),
               const SizedBox(height: 8),
@@ -180,7 +192,8 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
                 minLines: 3,
                 maxLines: 5,
                 maxLength: 300,
-                decoration: fieldDecoration('Description (optional)', Icons.notes_rounded),
+                decoration: fieldDecoration(
+                    'Description (optional)', Icons.notes_rounded),
                 validator: Validators.description,
               ),
               const FieldLabel('Assign to'),
@@ -216,7 +229,8 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
               const FieldLabel('Deadline'),
               FormField<DateTime>(
                 initialValue: _dueAt,
-                validator: (v) => Validators.deadline(v, now: DateTime.now(), original: widget.existing?.dueAt),
+                validator: (v) => Validators.deadline(v,
+                    now: DateTime.now(), original: widget.existing?.dueAt),
                 builder: (field) => Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -224,8 +238,12 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
                       borderRadius: BorderRadius.circular(14),
                       onTap: () => _pickDeadline(field),
                       child: InputDecorator(
-                        decoration: fieldDecoration('Date and time', Icons.event_rounded).copyWith(errorText: field.errorText),
-                        child: Text(field.value == null ? 'Tap to pick' : formatDateTime(field.value!)),
+                        decoration: fieldDecoration(
+                                'Date and time', Icons.event_rounded)
+                            .copyWith(errorText: field.errorText),
+                        child: Text(field.value == null
+                            ? 'Tap to pick'
+                            : formatDateTime(field.value!)),
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -233,9 +251,24 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
                     Wrap(
                       spacing: 8,
                       children: [
-                        ActionChip(label: const Text('In 1 hour'), onPressed: () => _setDeadline(field, now.add(const Duration(hours: 1)))),
-                        ActionChip(label: const Text('Tomorrow 5 PM'), onPressed: () => _setDeadline(field, DateTime(now.year, now.month, now.day + 1, 17))),
-                        ActionChip(label: const Text('In 1 week'), onPressed: () => _setDeadline(field, now.add(const Duration(days: 7)))),
+                        ActionChip(
+                            label: const Text('In 1 hour'),
+                            onPressed: () => _setDeadline(
+                                field, now.add(const Duration(hours: 1)))),
+                        ActionChip(
+                            label: const Text('Tomorrow 5 PM'),
+                            onPressed: () => _setDeadline(
+                                field,
+                                DateTime(
+                                    now.year, now.month, now.day + 1, 17))),
+                        ActionChip(
+                            label: const Text('In 3 days'),
+                            onPressed: () => _setDeadline(
+                                field, now.add(const Duration(days: 3)))),
+                        ActionChip(
+                            label: const Text('In 1 week'),
+                            onPressed: () => _setDeadline(
+                                field, now.add(const Duration(days: 7)))),
                       ],
                     ),
                   ],
@@ -244,7 +277,10 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
               const FieldLabel('Priority'),
               SegmentedButton<Priority>(
                 showSelectedIcon: false,
-                segments: [for (final p in Priority.values) ButtonSegment(value: p, label: Text(p.label))],
+                segments: [
+                  for (final p in Priority.values)
+                    ButtonSegment(value: p, label: Text(p.label))
+                ],
                 selected: {_priority},
                 onSelectionChanged: (s) => setState(() {
                   _priority = s.first;
@@ -254,7 +290,10 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
               const FieldLabel('Status'),
               SegmentedButton<TaskStatus>(
                 showSelectedIcon: false,
-                segments: [for (final s in TaskStatus.values) ButtonSegment(value: s, label: Text(s.label))],
+                segments: [
+                  for (final s in TaskStatus.values)
+                    ButtonSegment(value: s, label: Text(s.label))
+                ],
                 selected: {_status},
                 onSelectionChanged: (s) => setState(() {
                   _status = s.first;
@@ -265,9 +304,12 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
               FilledButton.icon(
                 // Disabled while saving so a double tap cannot create two tasks.
                 onPressed: _saving ? null : _save,
-                style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(52)),
+                style: FilledButton.styleFrom(
+                    minimumSize: const Size.fromHeight(52)),
                 icon: _saving
-                    ? const SizedBox.square(dimension: 18, child: CircularProgressIndicator(strokeWidth: 2))
+                    ? const SizedBox.square(
+                        dimension: 18,
+                        child: CircularProgressIndicator(strokeWidth: 2))
                     : const Icon(Icons.check_rounded),
                 label: Text(_isEdit ? 'Save changes' : 'Create task'),
               ),
