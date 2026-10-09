@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/gestures.dart';
 
 import 'data/session.dart';
 import 'models/member.dart';
@@ -27,8 +28,10 @@ class AppRoutes {
       AppRoutes.signIn => const SignInScreen(),
       AppRoutes.home => const HomeShell(),
       AppRoutes.task => TaskDetailsScreen(taskId: settings.arguments! as int),
-      AppRoutes.taskForm => TaskFormScreen(existing: settings.arguments as TaskItem?),
-      AppRoutes.member => MemberProfileScreen(member: settings.arguments! as Member),
+      AppRoutes.taskForm =>
+        TaskFormScreen(existing: settings.arguments as TaskItem?),
+      AppRoutes.member =>
+        MemberProfileScreen(member: settings.arguments! as Member),
       AppRoutes.newMember => const AddMemberScreen(),
       _ => null,
     };
@@ -44,7 +47,8 @@ class SlaPulseApp extends StatefulWidget {
   final bool signedIn;
 
   /// Lets any screen below reach the theme switch: SlaPulseApp.of(context).setDark(true)
-  static SlaPulseAppState of(BuildContext context) => context.findAncestorStateOfType<SlaPulseAppState>()!;
+  static SlaPulseAppState of(BuildContext context) =>
+      context.findAncestorStateOfType<SlaPulseAppState>()!;
 
   @override
   State<SlaPulseApp> createState() => SlaPulseAppState();
@@ -67,6 +71,10 @@ class SlaPulseAppState extends State<SlaPulseApp> {
     return MaterialApp(
       title: 'SLA Pulse',
       debugShowCheckedModeBanner: false,
+      // Let mouse drags scroll lists too (the emulator often sends mouse, not touch).
+      scrollBehavior: const MaterialScrollBehavior().copyWith(
+        dragDevices: PointerDeviceKind.values.toSet(),
+      ),
       theme: buildTheme(Brightness.light),
       darkTheme: buildTheme(Brightness.dark),
       themeMode: _dark ? ThemeMode.dark : ThemeMode.light,
